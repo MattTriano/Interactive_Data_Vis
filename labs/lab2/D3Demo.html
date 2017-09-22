@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8"/>
+        
+        <link rel="stylesheet" href="D3Demo.css">
+        <script src="https://d3js.org/d3.v4.min.js"></script>
+
+        <script>
+            function draw() {
+                var data = [10, 20, 50, 100]
+
+                var canvas = d3.select("#canvas")
+
+                canvas.selectAll("empty").data(data).enter()
+                        .append("circle")
+                        .attr("cx", function(d) {return d;})
+                        .attr("cy", 100)
+                        .attr("r", 20)
+                        .attr("fill", "red")
+            }
+            // function draw() {
+            //     var newCircle = d3.select("#canvas")
+            //         .append("circle")
+            //         .attr("r",10)
+            //         .attr("cx",50)
+            //         .attr("cy",50)
+            //     newCircle.attr("fill","red")
+            // }
+        </script>
+
+        <title>Now Let's Try D3</title>
+    </head>
+    <body onload="draw()">
+        <h1>Here is an SVG box we can use D3 to change</h1>
+
+        <svg id="canvas" height="500" width="500">
+            <polygon class="greenstar"
+                     points="100,10 40,198 190,78 10,78 160,198"
+            />
+        </svg>
+
+    </body>
+</html>
