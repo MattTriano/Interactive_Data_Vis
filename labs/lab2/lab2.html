@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+    
+    <head>
+    
+        <meta charset="UTF-8"/>
+        
+        <link rel="stylesheet" href="lab2.css">
+        <script src="https://d3js.org/d3.v4.min.js"></script>
+        <title>Now Let's Try D3</title>
+
+    </head>
+
+    <body>
+
+        <script type="text/javascript">
+
+            var dataset = [5, 10, 15, 20, 25]
+
+            d3.select("body").selectAll("p")
+                .data(dataset)
+                .enter()
+                .append("div")
+                .attr("class", "bar")
+                .style("height", function(d) { return 5*d + "px" });
+
+        </script>
+
+    </body>
+
+</html>

@@ -8,15 +8,19 @@
 
         <script>
             function draw() {
-                var data = [10, 20, 50, 100]
+                // var data = [10, 20, 50, 100]
+                var data = [{x:10, r:5},
+                            {x:20, r:20},
+                            {x:250, r:80},
+                            {x:150, r:12}]
 
                 var canvas = d3.select("#canvas")
 
                 canvas.selectAll("empty").data(data).enter()
                         .append("circle")
-                        .attr("cx", function(d) {return d;})
-                        .attr("cy", 100)
-                        .attr("r", 20)
+                        .attr("cx", function(d) {return d.x;})
+                        .attr("cy", function(d) {return d.x;})
+                        .attr("r", function(d) {return d.r;})
                         .attr("fill", "red")
             }
             // function draw() {
