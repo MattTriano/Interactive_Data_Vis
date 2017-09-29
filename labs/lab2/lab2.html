@@ -17,12 +17,40 @@
 
             var dataset = [5, 10, 15, 20, 25]
 
-            d3.select("body").selectAll("p")
+            var w       = 500;
+            var h       = 100;
+            var barPad  = 1;
+
+            var svg = d3.select("body")
+                        .append("svg")
+                        .attr("width", w)
+                        .attr("height", h);
+
+            svg.selectAll("rect")
                 .data(dataset)
                 .enter()
-                .append("div")
-                .attr("class", "bar")
-                .style("height", function(d) { return 5*d + "px" });
+                .append("rect")
+                .attr("x", function(d, i) {
+                    return i * (w / dataset.length);
+                })
+                .attr("y", function(d) {
+                    return h - (d * 5);
+                })
+                .attr("width", w / dataset.length - barPad)
+                .attr("height", function(d) {
+                    return 5 * d;
+                })
+                .attr("fill", function(d) {
+                    return "rgb(0, 0, " + Math.round(d * 10) + ")";
+                });
+
+            // d3.select("body").selectAll("p")
+            //     .data(dataset)
+            //     .enter()
+            //     .append("div")
+            //     .attr("class", "bar")
+            //     .style("height", function(d) { return 5*d + "px" });
+
 
         </script>
 
