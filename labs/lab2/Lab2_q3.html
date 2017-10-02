@@ -31,12 +31,13 @@
 
             var rowConverter = function(d) {
                     return {
-                            Date:         parseTime(d.Date),
-                            NetQtrInc:    parseInt(d.NetQtrInc)
+                            country:    d.country,
+                            co2:        parseFloat(d.co2_tons),
+                            gdp:        parseFloat(f.gdp)
                     };
             }
 
-            d3.csv("alphabet_income_statement.csv", rowConverter, function(error, data) {
+            d3.csv("co2_production_vs_gdp_1980.csv", rowConverter, function(error, data) {
                 if (error) {
                     console.log(error);
                 } else {
@@ -45,23 +46,21 @@
                     var firstQtr = d3.min(dataset, function(d) { return d.Date; });
                     var lastQtr  = d3.max(dataset, function(d) { return d.Date; });
 
-                    xScale = d3.scaleTime()
-                               .domain([
-                                        d3.timeMonth.offset(firstQtr, -1),
-                                        d3.timeMonth.offset(lastQtr, 3)
-                                      ])
+                    xScale = d3.scaleLinear()
+                               .domain([0, d3.max(dataset, function(d) { return d.gdp; })])
                                .range([padding, w - padding]);
 
                     yScale = d3.scaleLinear()
-                               .domain([
-                                      0,
-                                      d3.max(dataset, function(d) { return d.NetQtrInc; })
-                                  ])
+                               .domain([ 0, d3.max(dataset, function(d) { return d.co2; })])
                                .range([h - padding, padding]);
 
+                    aScale = d3.scaleSqrt()
+                               .domain([0, d3.max(dataset, function(d) { return d.co2; })])
+                               .range([1,5]);
+
                     var xAxis = d3.axisBottom()
-                                  .scale(xScale)
-                                  .tickFormat(formatTime);
+                                  .scale(xScale);
+                                  // .tickFormat(formatTime);
 
                     var yAxis = d3.axisLeft()
                                   .scale(yScale);
@@ -71,18 +70,18 @@
                                 .attr("width", w)
                                 .attr("height", h);
 
-                    svg.selectAll("rect")
+                    svg.selectAll("circle")
                        .data(dataset)
                        .enter()
-                       .append("rect")
-                       .attr("x", function(d) {
-                                      return xScale(d.Date) - 0.31* padding; 
+                       .append("circle")
+                       .attr("cx", function(d) {
+                                      return xScale(d.gdp) - 0.31* padding; 
                        })
-                       .attr("height", function(d) { 
-                                          return h - yScale(d.NetQtrInc) - padding; 
+                       .attr("cy", function(d) { 
+                                      return yScale(d.co2); 
                        })
-                       .attr("y", function(d) {
-                                              return yScale(d.NetQtrInc); 
+                       .attr("r", function(d) {
+                                      return aScale(d.co2); 
                        })
                        .attr("width", 1);
 
@@ -106,7 +105,7 @@
                         .attr("y", padding/2)
                         .attr("text-anchor", "middle")
                         .style("text-decoration", "underline")
-                        .text("Quarterly Net Income for Alphabet Inc.")
+                        .text("CO2 output by GDP (1980)")
               }
           });
 
