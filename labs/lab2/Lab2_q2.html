@@ -20,7 +20,7 @@
             var w       = 600;
             var h       = 400;
             var padding = 50;
-            var barPad  = 2
+            var barPad  = 2;
 
             var dataset, xScale, yScale, xAxis, yAxis; 
 
@@ -76,7 +76,7 @@
                        .enter()
                        .append("rect")
                        .attr("x", function(d) {
-                                      return xScale(d.Date); 
+                                      return xScale(d.Date) - 0.31* padding; 
                        })
                        .attr("height", function(d) { 
                                           return h - yScale(d.NetQtrInc) - padding; 
@@ -84,7 +84,7 @@
                        .attr("y", function(d) {
                                               return yScale(d.NetQtrInc); 
                        })
-                       .attr("width", (w - 2 * padding) / (dataset.length + 1) - barPad);
+                       .attr("width", 1);
 
                     svg.append("g")
                        .attr("class", "axis")
