@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- Matt Triano's CSC 592 Lab2 Part II -->
+<!-- Matt Triano's CSC 592 Lab2 Part I -->
 <!-- The Interactive Data Vis textbook (ch 5-7) and various Mike Bostocks -->
 <!-- examples were referenced while working through this lab -->
 <html lang="en">
@@ -10,7 +10,7 @@
         
         <link rel="stylesheet" href="lab2.css">
         <script src="https://d3js.org/d3.v4.min.js"></script>
-        <title>Matt Triano's Line Graph Example</title>
+        <title>Matt Triano's Bar Plot Example</title>
 
     </head>
 
@@ -83,16 +83,20 @@
                                 .attr("height", h);
 
                     // This places bars on the canvas
-                    svg.selectAll("line")
+                    svg.selectAll("rect")
                        .data(dataset)
                        .enter()
-                       .append("line")
+                       .append("rect")
                        .attr("x", function(d) {
-                                        return xScale(d.Date); 
+                                        return xScale(d.Date) - 0.31* padding; 
+                       })
+                       .attr("height", function(d) { 
+                                        return h - yScale(d.NetQtrInc) - padding; 
                        })
                        .attr("y", function(d) {
                                         return yScale(d.NetQtrInc); 
-                       });
+                       })
+                       .attr("width", (w - 2 * padding) / (dataset.length + 1) - barPad);
 
                     // This adds the x-axis and adds the x-labels
                     svg.append("g")

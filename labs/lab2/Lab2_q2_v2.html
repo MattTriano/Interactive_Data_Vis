@@ -1,7 +1,12 @@
 <!DOCTYPE html>
 <!-- Matt Triano's CSC 592 Lab2 Part II -->
-<!-- The Interactive Data Vis textbook (ch 5-7) and various Mike Bostocks -->
+<!-- The Interactive Data Vis textbook (ch 5-7, 11) and various Mike Bostocks -->
 <!-- examples were referenced while working through this lab -->
+
+<!-- I included this version as I think it's more likely you're looking for -->
+<!-- Something like this for part 2, but the hint about only needed -->
+<!-- a small change makes me unsure, as this seems to be somewhat -->
+<!-- significant of a change-->
 <html lang="en">
     
     <head>
@@ -11,6 +16,14 @@
         <link rel="stylesheet" href="lab2.css">
         <script src="https://d3js.org/d3.v4.min.js"></script>
         <title>Matt Triano's Line Graph Example</title>
+
+        <style type="text/css">
+            .line {
+                  fill:             none;
+                  stroke:           blue;
+                  stroke-width:     2;
+            }
+        </style>
 
     </head>
 
@@ -82,17 +95,17 @@
                                 .attr("width", w)
                                 .attr("height", h);
 
-                    // This places bars on the canvas
-                    svg.selectAll("line")
-                       .data(dataset)
-                       .enter()
-                       .append("line")
-                       .attr("x", function(d) {
-                                        return xScale(d.Date); 
-                       })
-                       .attr("y", function(d) {
-                                        return yScale(d.NetQtrInc); 
-                       });
+                    // This makes a function to convert our data into coordinates
+                    var line = d3.line()
+                                  .x( function(d) { return xScale(d.Date); })
+                                  .y( function(d) { return yScale(d.NetQtrInc); });
+
+                    svg.append("path")
+                        .datum(dataset)
+                        .attr("class", "line")
+                        .attr("d", line);
+                    
+
 
                     // This adds the x-axis and adds the x-labels
                     svg.append("g")

@@ -2,6 +2,9 @@
 <!-- Matt Triano's CSC 592 Lab2 Part II -->
 <!-- The Interactive Data Vis textbook (ch 5-7) and various Mike Bostocks -->
 <!-- examples were referenced while working through this lab -->
+
+<!-- I also included another version if you're looking for a line graph -->
+<!-- (which I think is more likely than this interpretation) -->
 <html lang="en">
     
     <head>
@@ -10,7 +13,7 @@
         
         <link rel="stylesheet" href="lab2.css">
         <script src="https://d3js.org/d3.v4.min.js"></script>
-        <title>Matt Triano's Line Graph Example</title>
+        <title>Now Let's Try D3</title>
 
     </head>
 
@@ -83,16 +86,20 @@
                                 .attr("height", h);
 
                     // This places bars on the canvas
-                    svg.selectAll("line")
+                    svg.selectAll("rect")
                        .data(dataset)
                        .enter()
-                       .append("line")
+                       .append("rect")
                        .attr("x", function(d) {
-                                        return xScale(d.Date); 
+                                        return xScale(d.Date) - 0.31* padding; 
+                       })
+                       .attr("height", function(d) { 
+                                        return h - yScale(d.NetQtrInc) - padding; 
                        })
                        .attr("y", function(d) {
                                         return yScale(d.NetQtrInc); 
-                       });
+                       })
+                       .attr("width", 1);
 
                     // This adds the x-axis and adds the x-labels
                     svg.append("g")
