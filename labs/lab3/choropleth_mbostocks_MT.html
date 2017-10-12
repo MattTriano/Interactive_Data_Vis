@@ -5,8 +5,8 @@
 <!-- load the map, then load the data.                                                -->
 <!--     Same as last time, to get Chrome to recognize the datafile, I had to use a   -->
 <!--  local server and view my files (in Chrome) at http://localhost:8888.            -->
-<!--  To set up a server, I entered:  "python -m http.server 8888 &." in parent dir   --> 
-<!-- of my files -->
+<!--  To set up a server, I entered:  "python -m http.server 8888 &." in a parent     --> 
+<!--  dir of my files -->
 <html>
   <head>
     <meta charset="utf-8">
@@ -40,14 +40,6 @@
         var data_map = d3.map();
 
         var path = d3.geoPath();
-
-        d3.queue()
-            .defer(d3.json, "https://d3js.org/us-10m.v1.json")
-            .defer(d3.tsv, data_filename, function(d) { data_map.set(d.id, +d.rate); })
-            .await(ready);
-
-        function ready(error, us) {
-          if (error) throw error;
 
         var x = d3.scaleLinear()
                   .domain([1, 10])
@@ -91,7 +83,13 @@
           .select(".domain")
             .remove();
 
-        
+        d3.queue()
+            .defer(d3.json, "https://d3js.org/us-10m.v1.json")
+            .defer(d3.tsv, data_filename, function(d) { data_map.set(d.id, +d.rate); })
+            .await(ready);
+
+        function ready(error, us) {
+          if (error) throw error;
 
         svg.append("g")
               .attr("class", "counties")
@@ -101,7 +99,7 @@
               .attr("fill", function(d) { return color(d.rate = data_map.get(d.id)); })
               .attr("d", path)
            .append("title")
-              .text(function(d) { return d.rate + "%"; });
+              .text(function(d) { return d.rate ; });
 
         svg.append("path")
               .datum(topojson.mesh(us, us.objects.states, function(a, b) { return a !== b; }))
@@ -111,7 +109,7 @@
       }
 
       drawChoro(unempSvg, "unemployment.tsv", "Unemployment rate")
-      drawChoro(avgWageSvg, "bls_qcew_private_ind_avg_wage_2017Q1.tsv", "Average Weekly Wage [$]")
+      // drawChoro(avgWageSvg, "bls_qcew_private_ind_avg_wage_2017Q1.tsv", "Average Weekly Wage [$]")
 
 
     </script>
