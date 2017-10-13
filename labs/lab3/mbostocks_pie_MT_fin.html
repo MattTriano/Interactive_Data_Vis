@@ -2,6 +2,7 @@
 <html>
   <head>
     <meta charset="utf-8">
+    <script src="https://d3js.org/d3.v4.js"></script>
     <style>
       .arc text {
         font: 10px sans-serif;
@@ -17,7 +18,7 @@
   <body>
     <svg id="pie1" width="500" height="500"></svg>
     <svg id="pie2" width="500" height="500"></svg>
-    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="https://d3js.org/d3.v4.js"></script>
     <script>
 
       var drawPie = function(svg, data){
@@ -79,7 +80,7 @@
       var svg1 = d3.select("#pie1"),
           svg2 = d3.select("#pie2");
 
-      var pieCSVData = d3.csv("pie_data.csv", 
+      var pieCSVData = d3.csvParse("pie_data.csv", 
                               function(d) {
                                 d.population = +d.population;
                                 return d;

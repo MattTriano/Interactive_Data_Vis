@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>D3: Pie layout pie chart</title>
+		<script src="https://d3js.org/d3.v4.min.js"></script>
+		<style type="text/css">
+
+			text {
+				font-family: sans-serif;
+				font-size: 12px;
+				fill: white;
+			}
+
+		</style>
+	</head>
+	<body>
+		<svg id="pie1" width="270" height="300"></svg>
+		<svg id="pie2" width="200" height="200"></svg>
+		<svg id="pie3" width="500" height="500"></svg>
+		<script src="values1.csv.js"></script>
+		<script src="values2.csv.js"></script>
+		<script src="values3.csv.js"></script>
+
+
+		<script type="text/javascript">
+
+			var drawPie = function(svg, data){
+				console.log(data);
+				var w = +svg.attr("width"),
+					h = +svg.attr("height");
+
+				var outerRadius = Math.min(w,h) / 2;
+				var innerRadius = 0; 
+				var arc = d3.arc()
+							.innerRadius(innerRadius)
+							.outerRadius(outerRadius);
+
+				var g = svg.append("g")
+							.attr("transform", "translate(" + w/3 + "," + h/2 + ")");
+
+				var pie = d3.pie()
+							.value(function(d) { return d.value;})
+							(data);
+
+				//Easy colors accessible via a 10-step ordinal scale
+				var color = d3.scaleOrdinal(d3.schemeCategory10);
+
+				//Set up groups
+				var arcs = svg.selectAll("g.arc")
+						  		.data(pie)
+						  		.enter()
+						  	   .append("g")
+						  		.attr("class", "arc")
+						  		.attr("transform", "translate(" + outerRadius + "," + outerRadius + ")");
+
+				//Draw arc paths
+				arcs.append("path")
+					.attr("fill", function(d, i) {
+						return color(i);
+					})
+					.attr("d", arc);
+
+				//Labels
+				arcs.append("text")
+			    	.attr("transform", function(d) {
+			    		return "translate(" + arc.centroid(d) + ")";
+			    	})
+			    	.attr("text-anchor", "middle")
+			    	.text(function(d) {
+			    		return d.value;
+			    	});
+
+			}
+
+
+			var dataset1 = d3.csvParse(pie1_value_csv,
+										function(d) {
+											d.value = parseInt(d.value);
+											return d;
+										})
+
+			var dataset2 = d3.csvParse(pie2_value_csv,
+										function(d) {
+											d.value = parseInt(d.value);
+											return d;
+										})
+
+			var dataset3 = d3.csvParse(pie3_value_csv,
+										function(d) {
+											d.value = parseInt(d.value);
+											return d;
+										})
+
+
+			
+			var pieSVG1 = d3.select("#pie1"),
+				pieSVG2 = d3.select("#pie2"),
+				pieSVG3 = d3.select("#pie3");
+
+			drawPie(pieSVG1, dataset1)
+			drawPie(pieSVG2, dataset2)
+			drawPie(pieSVG3, dataset3)
+
+
+
+			
+			
+			
+			
+			
+			
+						
+		</script>
+	</body>
+</html>
