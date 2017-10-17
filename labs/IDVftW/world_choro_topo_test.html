@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<!-- https://bl.ocks.org/mbostock/2206590 -->
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
@@ -9,19 +8,30 @@
 		<!-- <script src="https://unpkg.com/topojson-client@3"></script> -->
 		<style type="text/css">
 			/* No style rules here yet */		
-			path {
-				stroke: #fff;
-				stroke-width: 0.1px;
-			}
 		</style>
 	</head>
 	<body>
-		<script type="text/javascript">
+		<canvas width="960" height="500"></canvas>
+		<script src="https://d3js.org/d3.v4.min.js"></script>
+		<script src="https://unpkg.com/topojson-client@3"></script>
+		<script>
+			var context = d3.select("canvas").node().getContext("2d"),
+				path = d3.geoPath(d3.geoMercator(), context);
+
+			d3.json("https://unpkg.com/world-atlas@1/world/110m.json", function(error, world) {
+				if (error) throw error;
+
+				context.beginPath();
+				path(topojson.mesh(world));
+				context.stroke();
+			});
+		</script>
+		
+		<!-- <script type="text/javascript">
 
 			//Width and height
 			var w = 900;
 			var h = 600;
-			var centered;
 
 			//Define map projection
 			var projection = d3.geoNaturalEarth();
@@ -36,13 +46,13 @@
 								//Colors derived from ColorBrewer, by Cynthia Brewer, and included in
 								//https://github.com/d3/d3-scale-chromatic
 
+
+
 			//Create SVG element
 			var svg = d3.select("body")
 						.append("svg")
 						.attr("width", w)
 						.attr("height", h);
-
-			var g = svg.append("g");
 
 			//Load in agriculture data
 			d3.csv("alcohol_deaths2015.csv", function(data) {
@@ -102,38 +112,12 @@
 					   			//If value is undefined…
 						   		return "#ccc";
 					   		}
-					   })
-					   .on("click", clicked);
+					   });
 			
 				});
 			
 			});
-
-			function clicked(d) {
-				var x, y, k;
-
-				if (d && centered !== d) {
-					var centroid = path.centroid(d);
-					x = centroid[0];
-					y = centroid[1];
-					k = 4;
-					centered = d;
-				} else {
-					x = w / 2;
-					y = h / 2;
-					k = 1;
-					centered = null;
-				}
-
-				g.selectAll("path")
-					.classed("active", centered && function(d) { return d === centered; });
-
-				g.transition()
-					.duration(750)
-					.attr("transform", "translate(" + w / 2 + "," + h / 2 + ")scale(" + k + ")translate(" + -x + "," + -y + ")")
-					.style("stroke-width", 1.5 / k + "px");
-			}
 			
-		</script>
+		</script> -->
 	</body>
 </html>

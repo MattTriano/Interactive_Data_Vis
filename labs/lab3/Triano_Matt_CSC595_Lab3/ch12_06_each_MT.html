@@ -1,0 +1,137 @@
+<!-- This was adapted from the last example in the selections chapter of  -->
+<!-- the Interactive Data Visualization for the Web, 2nd ed. -->
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>D3: Using each() to run an arbitrary function on each element in a selection</title>
+		<script src="https://d3js.org/d3.v4.min.js"></script>
+		<style type="text/css">
+			/* No style rules here yet */
+		</style>
+	</head>
+	<body>
+
+		<p>
+			<input type="button" value="Do something for each circle">
+		</p>
+		<svg id="plot1" width="300" height="300"></svg>
+		<svg id="plot2" width="200" height="800"></svg>
+		<svg id="plot3" width="600" height="400"></svg>
+		<script src="plot_values1.csv.js"></script>
+		<script src="plot_values2.csv.js"></script>
+		<script src="plot_values3.csv.js"></script>
+
+		<script type="text/javascript">
+
+			var drawPlot = function(svg, data) {
+				console.log(data);
+				var w = +svg.attr("width"),
+					h = +svg.attr("height");
+				var padding = 40;
+
+				//Create scale functions
+				var xScale = d3.scaleLinear()
+								.domain([0, d3.max(data, function(d) { return d.x_value; })])
+								.range([padding, w - padding / 2]);
+
+				var yScale = d3.scaleLinear()
+								.domain([0, d3.max(data, function(d) { return d.y_value; })])
+								.range([h - padding, padding / 2]);
+
+				//Define X axis
+				var xAxis = d3.axisBottom()
+							  .scale(xScale)
+							  .ticks(5);
+
+				//Define Y axis
+				var yAxis = d3.axisLeft()
+							  .scale(yScale)
+							  .ticks(5);
+
+				//Create circles
+				var allCircles = svg.selectAll("circle")
+			   						.data(data)
+			   						.enter()
+			   						.append("circle")
+			   						.attr("cx", function(d) {
+			   									return xScale(d.x_value);
+			   						})
+			   						.attr("cy", function(d) {
+			   									return yScale(d.y_value);
+			   						})
+			   						.attr("r", 2.5)
+			   						.attr("fill", "black");
+
+			   	//Create X axis
+			   	svg.append("g")
+			   		.attr("class", "axis")
+			   		.attr("transform", "translate(0," + (h - padding) + ")")
+			   		.call(xAxis);
+
+			   	//Create Y axis
+			   	svg.append("g")
+			   		.attr("class", "axis")
+			   		.attr("transform", "translate(" + padding + ",0)")
+			   		.call(yAxis);
+
+			   	//On button click, execute a function for each circle in the allCircles selection
+			   	d3.selectAll("input")
+			   		.on("click", function() {
+			   				allCircles.each(freakOut);  
+			   		});
+
+			}
+
+			
+		
+			//Define the freakOut function
+			var freakOut = function(d, i) {
+
+				//Since this function will be called by 'each()',
+				//it will be aware of each element on which it operates.
+				//The 'this' context will be updated, and d and i will
+				//be populated with the associated values.
+				var colors = d3.schemeCategory20;
+				var colorIndex = Math.round(Math.random() * 20);
+
+				d3.select(this)
+					.transition()
+					.delay(i * 25)
+					.duration(2000)
+					.ease(d3.easeElasticOut)
+					.attr("fill", colors[colorIndex])
+					.attr("r", 25);
+
+			};
+
+			var plot1Svg = d3.select("#plot1"),
+				plot2Svg = d3.select('#plot2'),
+				plot3Svg = d3.select('#plot3');
+
+			var plot1_data = d3.csvParse(plot1_csv_data,
+                                    function(d) {
+                                      d.x_value = +d.x_value;
+                                      d.y_value = +d.y_value;
+                                      return d;
+                                    })
+			var plot2_data = d3.csvParse(plot2_csv_data,
+                                    function(d) {
+                                      d.x_value = +d.x_value;
+                                      d.y_value = +d.y_value;
+                                      return d;
+                                    })
+			var plot3_data = d3.csvParse(plot3_csv_data,
+                                    function(d) {
+                                      d.x_value = +d.x_value;
+                                      d.y_value = +d.y_value;
+                                      return d;
+                                    })
+
+			drawPlot(plot1Svg, plot1_data)
+			drawPlot(plot2Svg, plot2_data)
+			drawPlot(plot3Svg, plot3_data)
+
+		</script>
+	</body>
+</html>
