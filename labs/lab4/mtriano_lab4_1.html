@@ -9,21 +9,55 @@
         </style>
     </head>
     <body>
+        <svg id="line_chart" width="600" height="500"></svg>
+        <svg id="brush_axis" width="600" height="80"></svg>
+
+        <script src="line_chart_csv.js"></script>
+        <script src="line_chart_vis.js"></script>
+        <script src="brush_vis.js"></script>
         <script>
-            var line_svg = d3.select("#line_chart");
-            var barSvg = d3.select('#bar');
+            var line_svg = d3.select('#line_chart');
+            var brush_svg = d3.select('#brush_axis');
+
+            //For converting strings to Dates
+            var parseTime = d3.timeParse('%m/%d/%y');
+
+            //For converting Dates to strings
+            var formatTime = d3.timeFormat('%e %m');
 
             //Function for converting CSV values from strings to Dates and numbers
-            var rowConverter = function(d) {
-                return {
-                    Date: parseTime(d.Date),
-                    Amount: parseInt(d.Amount)
-                };
-            }
+            var lineCSVData = d3.csvParse(line_data_csv_text, 
+                                            function(d) {
+                                                d.Date = parseTime(d.Date),
+                                                d.Amount = parseInt(d.Amount)
+                                                return d; 
+                                            })
+            console.log(lineCSVData);
+
+
+
+
+            LC = line_chart_vis();
+            Br = brush_vis();
+            LC.draw_line_chart(line_svg, lineCSVData);
+            Br.draw_brush(brush_svg, lineCSVData);
+            // Br.dispatch.on('selected', function(brushed) {
+            //     Br.draw_brush(brush_svg, )
+            // })
+                                        
 
             //Load in the data
-            var line_data = d3.csv("time_scale_data.csv", rowConverter, function(data) { return data; });
-            console.log(line_data);
+            // var line_data = d3.csv("time_scale_data.csv", function(data) {
+            //     return {
+            //         console.log(data);
+            //         Date: parseTime(data.Data),
+            //         Amount: parseInt(data.Amount)
+            //     };
+            // }, function(d) {
+            //     console.log(d);
+            // });
+            
+            
 
 
 

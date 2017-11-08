@@ -19,57 +19,35 @@ var line_chart_vis = function() {
             var startDate = d3.min(chart_data, function(d) { return d.Date; });
             var endDate = d3.max(chart_data, function(d) { return d.Date; });
 
-            //Function for converting CSV values from strings to Dates and numbers
-            var rowConverter = function(d) {
-                return {
-                    Date: parseTime(d.Date),
-                    Amount: parseInt(d.Amount)
-                };
-            }
-
-            //Load in the data
-            d3.csv("time_scale_data.csv", rowConverter, function(data) {
-
-                //Copy data into global dataset
-                dataset = data;
-
-                
-
-                //Create scale functions
-                xScale = d3.scaleTime()
-                               .domain([
-                                    d3.timeDay.offset(startDate, -1),  //startDate minus one day, for padding
-                                    d3.timeDay.offset(endDate, 1)     //endDate plus one day, for padding
-                                ])
-                               .range([padding, w - padding]);
+            //Create scale functions
+            xScale = d3.scaleTime()
+                        .domain([
+                                  d3.timeDay.offset(startDate, -1),  //startDate minus one day, for padding
+                                  d3.timeDay.offset(endDate, 1)     //endDate plus one day, for padding
+                        ])
+                        .range([padding, width - padding]);
 
                 yScale = d3.scaleLinear()
-                               .domain([
-                                    0,  //Because I want a zero baseline
-                                    d3.max(dataset, function(d) { return d.Amount; })
-                                ])
-                               .range([h - padding, padding]);
+                            .domain([
+                                      0,  //Because I want a zero baseline
+                                      d3.max(chart_data, function(d) { return d.Amount; })
+                            ])
+                            .range([height - padding, padding]);
 
                 //Define X axis
                 xAxis = d3.axisBottom()
-                                  .scale(xScale)
-                                  .ticks(9)
-                                  .tickFormat(formatTime);
+                            .scale(xScale)
+                            .ticks(9)
+                            .tickFormat(formatTime);
 
                 //Define Y axis
                 yAxis = d3.axisLeft()
-                                  .scale(yScale)
-                                  .ticks(10);
-
-                //Create SVG element
-                var svg = d3.select("body")
-                            .append("svg")
-                            .attr("width", w)
-                            .attr("height", h);
-
+                            .scale(yScale)
+                            .ticks(10);
+          
                 //Generate guide lines
                 svg.selectAll("line")
-                   .data(dataset)
+                   .data(chart_data)
                    .enter()
                    .append("line")
                    .attr("x1", function(d) {
@@ -78,7 +56,7 @@ var line_chart_vis = function() {
                    .attr("x2", function(d) {
                         return xScale(d.Date);
                    })
-                   .attr("y1", h - padding)
+                   .attr("y1", height - padding)
                    .attr("y2", function(d) {
                         return yScale(d.Amount);
                    })
@@ -87,7 +65,7 @@ var line_chart_vis = function() {
 
                 //Generate circles last, so they appear in front
                 svg.selectAll("circle")
-                   .data(dataset)
+                   .data(chart_data)
                    .enter()
                    .append("circle")
                    .attr("cx", function(d) {
@@ -101,7 +79,7 @@ var line_chart_vis = function() {
                 //Create X axis
                 svg.append("g")
                     .attr("class", "axis")
-                    .attr("transform", "translate(0," + (h - padding) + ")")
+                    .attr("transform", "translate(0," + (height - padding) + ")")
                     .call(xAxis);
                 
                 //Create Y axis
@@ -110,7 +88,6 @@ var line_chart_vis = function() {
                     .attr("transform", "translate(" + padding + ",0)")
                     .call(yAxis);
 
-            });
           }
         };
         return new_LC;
