@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Coorindated Views</title>
+    <link rel="stylesheet" href="bar.css">
+    <link rel="stylesheet" href="treemap.css">
+  </head>
+<body>
+    <svg id="tree" width="600" height="500"></svg>
+    <svg id="bar" width="200" height="200"></svg>
+
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="d3codetree.csv.js"></script>
+    <script src="madeuptree.csv.js"></script>
+    <script src="treemap.js"></script>
+    <script src="bar.js"></script>
+    <script>
+
+        var treeSvg = d3.select("#tree"),
+        barSvg = d3.select('#bar');
+
+        var treeCSVData = d3.csvParse(d3CodeTreeCSVText,
+                                function(d) {
+                                    d.size = +d.size;
+                                    return d;
+                                })
+
+        var madeupCSVData = d3.csvParse(madeupTreeCSVText,
+                                    function(d) {
+                                    d.size = +d.size;
+                                    return d;
+                                    })
+
+        drawTreemap(treeSvg, treeCSVData)
+        drawBarchart(barSvg, [{label:"a", value:1},
+                              {label:"b", value:2},
+                              {label:"c", value:4},
+                              {label:"d", value:8},
+                              {label:"e", value:16},
+                              {label:"f", value:32}])
+    </script>
+</body>
+</html>

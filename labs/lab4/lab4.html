@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Coorindated Views</title>
+    <link rel="stylesheet" href="bar.css">
+    <link rel="stylesheet" href="treemap.css">
+  </head>
+<body>
+    <svg id="tree" width="600" height="500"></svg>
+    <svg id="bar" width="200" height="200"></svg>
+
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="d3codetree.csv.js"></script>
+    <script src="madeuptree.csv.js"></script>
+    <script src="treemap.js"></script>
+    <script src="bar.js"></script>
+    <script>
+
+        var treeSvg = d3.select("#tree"),
+        barSvg = d3.select('#bar');
+
+        var treeCSVData = d3.csvParse(d3CodeTreeCSVText,
+                                function(d) {
+                                    d.size = +d.size;
+                                    return d;
+                                })
+
+        var madeupCSVData = d3.csvParse(madeupTreeCSVText,
+                                    function(d) {
+                                    d.size = +d.size;
+                                    return d;
+                                    })
+
+        function csvToTree(csvData) {
+            var root = d3.stratify()
+                          .id(function(d) { return d.path; })
+                          .parentId(function(d) { 
+                                return d.path.substring(0, d.path.lastIndexOf("/")); 
+                          })
+                          (csvData)
+                          .sum(function(d) { return d.size; })
+                          .sort(function(a, b) { 
+                            return b.height - a.height || b.value - a.value;
+                          });
+            return root;
+
+        }
+
+        function getSiblingData(node, searchStr) { 
+            // separate the piece of the search path we're looking for from the rest             
+            var firstSep = searchStr.indexOf("/");
+            var remainder = searchStr.substring(firstSep + 1);
+            var searchChild = searchStr.split("/")[1]; 
+            // look at all the children to find the search string and recurse             
+            for (var iChild = 0; iChild < node.children.length; iChild++) {
+              var child = node.children[iChild];
+              var lastChildSplit = child.data.path.split("/").slice(-1)[0];                 
+              if (lastChildSplit == searchChild) {
+                if (child.children) { return getSiblingData(child, remainder); }
+                else {
+                  return node.children.map( (child) => ({label:child.id, value:child.data.size}) )
+                }
+              }
+            }
+        } 
+
+        TM = TreeMapVis();
+        BC = BarChartVis();
+        var treeData = csvToTree(treeCSVData);
+        TM.drawTreemap(treeSvg, treeData);
+        TM.dispatch.on("selected",
+                      function(selectedPath) { 
+                        BC.drawBarchart(barSvg, getSiblingData(treeData, selectedPath));
+                      } )
+
+        
+        // BC.drawBarchart(barSvg, [{label:"a", value:1},
+        //                         {label:"b", value:2},
+        //                         {label:"c", value:4},
+        //                         {label:"d", value:8},
+        //                         {label:"e", value:16},
+        //                         {label:"f", value:32}])
+    </script>
+</body>
+</html>
