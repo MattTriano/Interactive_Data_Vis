@@ -1,38 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <title>D3: Time axis, prettier</title>
-        <script src="https://d3js.org/d3.v4.min.js"></script>
-        <style type="text/css">
-            /* No style rules here yet */       
-        </style>
-    </head>
-    <body>
-        <script>
-            var line_svg = d3.select("#line_chart");
-            var barSvg = d3.select('#bar');
-
-            //Function for converting CSV values from strings to Dates and numbers
-            var rowConverter = function(d) {
-                return {
-                    Date: parseTime(d.Date),
-                    Amount: parseInt(d.Amount)
-                };
-            }
-
-            //Load in the data
-            var line_data = d3.csv("time_scale_data.csv", rowConverter, function(data) { return data; });
-            console.log(line_data);
-
-
-
-        </script>
-        <!-- <script type="text/javascript">
-
+var line_chart_vis = function() {
+    var new_LC = {
+        draw_line_chart: function(svg, chart_data){
             //Width and height
-            var w = 500;
-            var h = 300;
+            var width = +svg.attr('width');
+            var height = +svg.attr('height');
+
             var padding = 40;
             
             var dataset, xScale, yScale, xAxis, yAxis;  //Empty, for now
@@ -42,6 +14,10 @@
 
             //For converting Dates to strings
             var formatTime = d3.timeFormat("%e");
+
+            //Discover start and end dates in dataset
+            var startDate = d3.min(chart_data, function(d) { return d.Date; });
+            var endDate = d3.max(chart_data, function(d) { return d.Date; });
 
             //Function for converting CSV values from strings to Dates and numbers
             var rowConverter = function(d) {
@@ -57,9 +33,7 @@
                 //Copy data into global dataset
                 dataset = data;
 
-                //Discover start and end dates in dataset
-                var startDate = d3.min(dataset, function(d) { return d.Date; });
-                var endDate = d3.max(dataset, function(d) { return d.Date; });
+                
 
                 //Create scale functions
                 xScale = d3.scaleTime()
@@ -137,7 +111,8 @@
                     .call(yAxis);
 
             });
+          }
+        };
+        return new_LC;
+      }
             
-        </script> -->
-    </body>
-</html>
