@@ -9,15 +9,19 @@
         </style>
     </head>
     <body>
-        <svg id="line_chart" width="600" height="500"></svg>
-        <svg id="brush_axis" width="600" height="80"></svg>
+        <svg id="line_chart" width="900" height="500"></svg>
+        <svg id="bar_stack" width="900" height="500"></svg>
 
         <script src="line_chart_csv.js"></script>
         <script src="line_chart_vis.js"></script>
         <script src="brush_vis.js"></script>
+        <script src="bar_stack_vis.js"></script>
+        <script src="mb_stack_data_csv.js"></script>
+        <script src="pie_chart_vis.js"></script>
+        <script src="values1.csv.js"></script>
         <script>
             var line_svg = d3.select('#line_chart');
-            var brush_svg = d3.select('#brush_axis');
+            var bar_stack_svg = d3.select('#bar_stack');
 
             //For converting strings to Dates
             var parseTime = d3.timeParse('%m/%d/%y');
@@ -32,15 +36,44 @@
                                                 d.Amount = parseInt(d.Amount)
                                                 return d; 
                                             })
-            console.log(lineCSVData);
+            
+            var stackedBarCSVData = d3.csvParse(mb_stack_data_text, 
+                            function(d) {
+                                d.State = d.State,
+                                d.Under_5_Years = parseInt(d.Under_5_Years),
+                                d.Years_5_to_13 = parseInt(d.Years_5_to_13),
+                                d.Years_14_to_17 = parseInt(d.Years_14_to_17),
+                                d.Years_18_to_24 = parseInt(d.Years_18_to_24),
+                                d.Years_25_to_44 = parseInt(d.Years_25_to_44),
+                                d.Years_45_to_64 = parseInt(d.Years_45_to_64),
+                                d.Years_65_and_Over = parseInt(d.Years_65_and_Over),
+                                d.total = (d.Under_5_Years + d.Years_5_to_13 + d.Years_14_to_17 + d.Years_18_to_24 + d.Years_25_to_44 + d.Years_45_to_64 +d.Years_65_and_Over)
+                                return d;
+                            })
+            console.log(stackedBarCSVData);
 
+            var dataset1 = d3.csvParse(pie1_value_csv,
+                                        function(d) {
+                                            d.value = parseInt(d.value);
+                                            return d;
+                                        })
+
+            
 
 
 
             LC = line_chart_vis();
-            Br = brush_vis();
-            LC.draw_line_chart(line_svg, lineCSVData);
-            Br.draw_brush(brush_svg, lineCSVData);
+            BS = bar_stack_vis();
+            PC = pie_chart_vis();
+            BS.draw_stacked_bar(bar_stack_svg, stackedBarCSVData);
+            // PC.draw_pie_chart(line_svg, dataset1);
+            BS.dispatch.on('selected', function(state_data) {
+                PC.draw_pie_chart(line_svg, state_data)
+
+            })
+            // LC.draw_line_chart(line_svg, lineCSVData);
+
+            // Br.draw_brush(brush_svg, lineCSVData);
             // Br.dispatch.on('selected', function(brushed) {
             //     Br.draw_brush(brush_svg, )
             // })

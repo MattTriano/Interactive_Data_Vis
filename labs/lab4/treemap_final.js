@@ -54,6 +54,7 @@ var TreeMapVis = function() {
         },
 
         dispatch: d3.dispatch("selected")
+        console.log(dispatch);
     };
 
   return newTM;
