@@ -30,7 +30,7 @@ var bar_stack_vis = function() {
             y.domain([0, d3.max(bar_data, function(d) { return d.total; })]).nice();
             z.domain(keys);
 
-            console.log(d3.stack().keys(keys)(bar_data));
+            // console.log(d3.stack().keys(keys)(bar_data));
 
             g.append("g")
               .selectAll("g")
